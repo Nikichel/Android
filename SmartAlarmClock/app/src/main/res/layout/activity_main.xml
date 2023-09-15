@@ -6,13 +6,54 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
+    <EditText
+        android:id="@+id/answerInput"
+        android:layout_width="257dp"
+        android:layout_height="80dp"
+        android:ems="10"
+        android:gravity="center"
+        android:hint="Введите ответ"
+        android:inputType="number|numberSigned"
+        android:textSize="34sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/answerText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:textSize="34sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/answerInput"
+        app:layout_constraintStart_toStartOf="@+id/answerInput"
+        app:layout_constraintTop_toBottomOf="@+id/answerInput" />
+
+    <Button
+        android:id="@+id/checkAnswer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:onClick="onClickGetAnswerB"
+        android:text="Ответить"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toEndOf="@+id/answerText"
+        app:layout_constraintStart_toStartOf="@+id/answerText"
+        app:layout_constraintTop_toBottomOf="@+id/answerText" />
+
+    <TextView
+        android:id="@+id/expressText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:gravity="center"
+        android:textSize="34sp"
+        app:layout_constraintBottom_toTopOf="@+id/answerInput"
+        app:layout_constraintEnd_toEndOf="@+id/answerInput"
+        app:layout_constraintStart_toStartOf="@+id/answerInput" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
