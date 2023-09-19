@@ -2,15 +2,21 @@ package com.example.smartalarmclock
 
 import android.content.Intent
 import android.graphics.Color
+import android.media.Ringtone
+import android.media.RingtoneManager
+import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.annotation.RequiresApi
 import com.example.smartalarmclock.databinding.ActivityMainBinding
 import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private lateinit var ringtone: Ringtone
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -20,6 +26,17 @@ class MainActivity : AppCompatActivity() {
             val i= Intent(this, AlarmActivity::class.java)
             startActivity(i)
         }
+
+        var notification: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+        ringtone = RingtoneManager.getRingtone(this, notification)
+        if(ringtone == null){
+            notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
+            ringtone = RingtoneManager.getRingtone(this, notification)
+        }
+        else{
+            ringtone.isLooping = true
+            ringtone.play()
+        }
     }
     override fun onResume() {
         super.onResume()
@@ -27,6 +44,12 @@ class MainActivity : AppCompatActivity() {
         binding.expressText.text = task
     }
 
+    override fun onStop() {
+        super.onStop()
+        if(ringtone!=null && ringtone.isPlaying){
+            ringtone.stop()
+        }
+    }
     fun onClickGetAnswerB(view: View){
         val task = binding.expressText.text.toString()
         val express = toRPN(task)
