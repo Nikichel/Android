@@ -1,6 +1,5 @@
 package com.example.smartalarmclock
 
-import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -25,16 +24,16 @@ class AlarmActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initAlarm()
-        alarmIntent = Intent(this, AlarmReceiver::class.java).let { alarmIntent ->
+        alarmIntent = Intent(this, AlarmReceiver::class.java).let { intent ->
             PendingIntent.getBroadcast(this, 0,intent,PendingIntent.FLAG_IMMUTABLE)
         }
 
     }
 
-    @SuppressLint("MissingPermission")
     fun onClickSetAlarmClock(view: View){
         clock.set(Calendar.HOUR_OF_DAY, binding.alarmClock.hour)
         clock.set(Calendar.MINUTE, binding.alarmClock.minute)
+        clock.set(Calendar.SECOND, 0)
         alarmManager?.setExact(
             AlarmManager.RTC_WAKEUP,
             clock.timeInMillis,
@@ -45,6 +44,7 @@ class AlarmActivity : AppCompatActivity() {
     }
     private fun initAlarm(){
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        Log.d("MyLog", alarmManager.toString())
         binding.alarmClock.setIs24HourView(true)
     }
 }
