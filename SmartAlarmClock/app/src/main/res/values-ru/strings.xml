@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Умный будильник</string>
+    <string name="set_alarm_clock_button">Установить будильник</string>
+    <string name="hint_answer">Ответ</string>
+    <string name="answer_button">Ответить</string>
+    <string name="alarm_clock_button">Будильник</string>
+</resources>

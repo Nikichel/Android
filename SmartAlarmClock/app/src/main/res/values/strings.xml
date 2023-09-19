@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Smart Alarm Clock</string>
+    <string name="set_alarm_clock_button">Set alarm clock</string>
+    <string name="hint_answer">Answer</string>
+    <string name="answer_button">Answer</string>
+    <string name="alarm_clock_button">Alarm clock</string>
+
 </resources>
