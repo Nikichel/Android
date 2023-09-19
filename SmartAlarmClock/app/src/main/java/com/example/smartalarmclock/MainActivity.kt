@@ -1,5 +1,6 @@
 package com.example.smartalarmclock
 
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,6 +15,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.setAlarmClockB.setOnClickListener {
+            val i= Intent(this, AlarmActivity::class.java)
+            startActivity(i)
+        }
     }
     override fun onResume() {
         super.onResume()

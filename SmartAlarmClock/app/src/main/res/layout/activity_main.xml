@@ -6,6 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <Button
+        android:id="@+id/setAlarmClockB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:onClick="onClickGetAnswerB"
+        android:text="Будильник"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toEndOf="@+id/checkAnswer"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="@+id/checkAnswer"
+        app:layout_constraintTop_toBottomOf="@+id/checkAnswer" />
+
     <EditText
         android:id="@+id/answerInput"
         android:layout_width="257dp"
