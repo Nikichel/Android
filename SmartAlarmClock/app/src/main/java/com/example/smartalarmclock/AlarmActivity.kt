@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -18,45 +19,38 @@ import java.util.Locale
 
 
 class AlarmActivity : AppCompatActivity() {
+    private val clock = Calendar.getInstance()
+    private lateinit var alarmManager: AlarmManager
+    private lateinit var alarmIntent: PendingIntent
     private lateinit var binding: ActivityAlarmBinding
-    private val sdt = SimpleDateFormat("HH:mm", Locale.getDefault())
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAlarmBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.alarmClock.setIs24HourView(true)
 
-        if (!Settings.canDrawOverlays(this)) {
-            val intent = Intent(
-                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                Uri.parse("package:$packageName")
-            )
-            startActivity(intent)
+        initAlarm()
+        alarmIntent = Intent(this, AlarmReceiver::class.java).let { intent ->
+            PendingIntent.getBroadcast(this, 0,intent,PendingIntent.FLAG_IMMUTABLE)
         }
+
     }
 
     fun onClickSetAlarmClock(view: View){
-        val clock = Calendar.getInstance()
-        clock.set(Calendar.SECOND, 0)
-        clock.set(Calendar.MINUTE, binding.alarmClock.minute)
         clock.set(Calendar.HOUR_OF_DAY, binding.alarmClock.hour)
+        clock.set(Calendar.MINUTE, binding.alarmClock.minute)
+        clock.set(Calendar.SECOND, 0)
+        alarmManager?.setExact(
+            AlarmManager.RTC_WAKEUP,
+            clock.timeInMillis,
+            alarmIntent
+        )
 
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        var alarmClockInfo = AlarmManager.AlarmClockInfo(clock.timeInMillis, getAlarmClockInfoPendingIntent())
-
-        alarmManager.setAlarmClock(alarmClockInfo, getAlarmActionPendingIntent())
-        Toast.makeText(this, "Будильник " + sdt.format(clock.time), Toast.LENGTH_LONG).show()
+        Log.d("MyLog", "Set Alarm")
     }
-
-    private fun getAlarmClockInfoPendingIntent(): PendingIntent{
-        val alarmClockIntent = Intent(this, AlarmActivity::class.java)
-        alarmClockIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-        return PendingIntent.getActivity(this, 0, alarmClockIntent,PendingIntent.FLAG_UPDATE_CURRENT)
-    }
-
-    private fun getAlarmActionPendingIntent(): PendingIntent{
-        val intent = Intent(this, MainActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-        return PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+    private fun initAlarm(){
+        alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        Log.d("MyLog", alarmManager.toString())
+        binding.alarmClock.setIs24HourView(true)
     }
 }

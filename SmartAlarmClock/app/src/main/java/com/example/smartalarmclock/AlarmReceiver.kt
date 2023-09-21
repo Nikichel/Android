@@ -27,13 +27,6 @@ class AlarmReceiver : BroadcastReceiver() {
             @Suppress("DEPRECATION")
             keyguardLock.disableKeyguard()
         }
-        // Получите Uri звукового ресурса (например, из ресурсов приложения)
-        val ringtoneUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-        // Создайте объект Ringtone с использованием RingtoneManager
-        val ringtone = RingtoneManager.getRingtone(context, ringtoneUri)
-        // Воспроизведите рингтон
-        ringtone?.play()
-        // Захватите WakeLock, чтобы предотвратить блокировку экрана во время воспроизведения
         wakeLock.acquire()
 
 
