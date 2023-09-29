@@ -12,12 +12,7 @@ import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.getSystemService
 
 class AlarmReceiver : BroadcastReceiver() {
-    private lateinit var wakeLock: PowerManager.WakeLock
-    private var ringtone: Ringtone? = null
     override fun onReceive(context: Context, intent: Intent) {
-        Log.d("MyLog", "ALARM!")
-
-
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
         val keyguardManager = context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
         @Suppress("DEPRECATION") val wakeLockFlags = PowerManager.FULL_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP
@@ -27,14 +22,10 @@ class AlarmReceiver : BroadcastReceiver() {
             @Suppress("DEPRECATION")
             keyguardLock.disableKeyguard()
         }
-        wakeLock.acquire()
-
+        wakeLock.acquire(10*60*1000L /*10 minutes*/)
 
         val newIntent = Intent(context, MainActivity::class.java)
         newIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(newIntent)
     }
-
-
-
 }

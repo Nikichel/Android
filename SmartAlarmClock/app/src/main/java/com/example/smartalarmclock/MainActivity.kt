@@ -27,46 +27,50 @@ class MainActivity : AppCompatActivity() {
             startActivity(i)
         }
 
+        setRingtone()
+    }
+
+    private fun setRingtone() {
         var notification: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
         ringtone = RingtoneManager.getRingtone(this, notification)
-        if(ringtone == null){
+        if (ringtone == null) {
             notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
             ringtone = RingtoneManager.getRingtone(this, notification)
-        }
-        else{
+        } else {
             ringtone.isLooping = true
             ringtone.play()
         }
     }
+
     override fun onResume() {
         super.onResume()
         val task = generateExperssion()
         binding.expressText.text = task
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         if(ringtone!=null && ringtone.isPlaying){
             ringtone.stop()
         }
     }
     fun onClickGetAnswerB(view: View){
         val task = binding.expressText.text.toString()
-        val express = toRPN(task)
-        for(str in express)
-            Log.d("RPN", str)
-        val answer = calculateRPN(express)
-        binding.answerText.visibility = View.VISIBLE
-        if(answer == binding.answerInput.text.toString().toInt()){
-            binding.answerText.setTextColor(Color.GREEN)
-            binding.answerText.text = "ВЕРНО"
+        if(task.isNotEmpty()){
+            val answer = calculateRPN(toRPN(task))
+            binding.answerText.visibility = View.VISIBLE
+            if(answer == binding.answerInput.text.toString().toInt()){
+                binding.answerText.setTextColor(Color.GREEN)
+                binding.answerText.text = "ВЕРНО"
+                binding.setAlarmClockB.visibility = View.VISIBLE
+            }
+            else{
+                binding.answerText.setTextColor(Color.RED)
+                binding.answerText.text = "НЕ ВЕРНО!\nОтвет: $answer"
+            }
+            binding.expressText.text = generateExperssion()
+            binding.answerInput.setText("")
         }
-        else{
-            binding.answerText.setTextColor(Color.RED)
-            binding.answerText.text = "НЕ ВЕРНО!\nОтвет: " + answer.toString()
-        }
-        binding.expressText.text = generateExperssion()
-        binding.answerInput.setText("")
     }
 
     private fun generateExperssion(): String{

@@ -45,12 +45,9 @@ class AlarmActivity : AppCompatActivity() {
             clock.timeInMillis,
             alarmIntent
         )
-
-        Log.d("MyLog", "Set Alarm")
     }
     private fun initAlarm(){
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        Log.d("MyLog", alarmManager.toString())
         binding.alarmClock.setIs24HourView(true)
     }
 }
