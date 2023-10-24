@@ -36,15 +36,30 @@ class AlarmActivity : AppCompatActivity() {
 
     }
 
-    fun onClickSetAlarmClock(view: View){
-        clock.set(Calendar.HOUR_OF_DAY, binding.alarmClock.hour)
+    fun onClickSetAlarmClock(view: View) = with(binding){
+        /*clock.set(Calendar.HOUR_OF_DAY, binding.alarmClock.hour)
         clock.set(Calendar.MINUTE, binding.alarmClock.minute)
         clock.set(Calendar.SECOND, 0)
         alarmManager?.setExact(
             AlarmManager.RTC_WAKEUP,
             clock.timeInMillis,
             alarmIntent
-        )
+        )*/
+        var hour = alarmClock.hour.toString()
+        var min = alarmClock.minute.toString()
+
+        if(hour.length == 1){
+            hour = "0$hour"
+        }
+        if(min.length == 1){
+            min = "0$min"
+        }
+        val alarmClock = AlarmClock(hour, min)
+        val setIntent = Intent().apply{
+            putExtra("alarmClock", alarmClock)
+        }
+        setResult(RESULT_OK, setIntent)
+        finish()
     }
     private fun initAlarm(){
         alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
