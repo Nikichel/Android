@@ -5,12 +5,9 @@ import android.graphics.Color
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import androidx.annotation.RequiresApi
 import com.example.smartalarmclock.databinding.ActivityMainBinding
 import kotlin.random.Random
 
@@ -21,11 +18,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        binding.setAlarmClockB.setOnClickListener {
-            val i= Intent(this, AlarmActivity::class.java)
-            startActivity(i)
-        }
 
         setRingtone()
     }
@@ -60,13 +52,11 @@ class MainActivity : AppCompatActivity() {
             val answer = calculateRPN(toRPN(task))
             binding.answerText.visibility = View.VISIBLE
             if(answer == binding.answerInput.text.toString().toInt()){
-                binding.answerText.setTextColor(Color.GREEN)
-                binding.answerText.text = "ВЕРНО"
-                binding.setAlarmClockB.visibility = View.VISIBLE
+                finish()
             }
             else{
                 binding.answerText.setTextColor(Color.RED)
-                binding.answerText.text = "НЕ ВЕРНО!\nОтвет: $answer"
+                binding.answerText.text = "НЕ ВЕРНО!\n"
             }
             binding.expressText.text = generateExperssion()
             binding.answerInput.setText("")
