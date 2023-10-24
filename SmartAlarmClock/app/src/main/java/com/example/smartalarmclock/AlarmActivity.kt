@@ -19,9 +19,6 @@ import java.util.Locale
 
 
 class AlarmActivity : AppCompatActivity() {
-    private val clock = Calendar.getInstance()
-    private lateinit var alarmManager: AlarmManager
-    private lateinit var alarmIntent: PendingIntent
     private lateinit var binding: ActivityAlarmBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,22 +26,10 @@ class AlarmActivity : AppCompatActivity() {
         binding = ActivityAlarmBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        initAlarm()
-        alarmIntent = Intent(this, AlarmReceiver::class.java).let { intent ->
-            PendingIntent.getBroadcast(this, 0,intent,PendingIntent.FLAG_IMMUTABLE)
-        }
-
+        binding.alarmClock.setIs24HourView(true)
     }
 
     fun onClickSetAlarmClock(view: View) = with(binding){
-        /*clock.set(Calendar.HOUR_OF_DAY, binding.alarmClock.hour)
-        clock.set(Calendar.MINUTE, binding.alarmClock.minute)
-        clock.set(Calendar.SECOND, 0)
-        alarmManager?.setExact(
-            AlarmManager.RTC_WAKEUP,
-            clock.timeInMillis,
-            alarmIntent
-        )*/
         var hour = alarmClock.hour.toString()
         var min = alarmClock.minute.toString()
 
@@ -60,9 +45,5 @@ class AlarmActivity : AppCompatActivity() {
         }
         setResult(RESULT_OK, setIntent)
         finish()
-    }
-    private fun initAlarm(){
-        alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        binding.alarmClock.setIs24HourView(true)
     }
 }
