@@ -39,7 +39,7 @@ class AlarmActivity : AppCompatActivity() {
         if(min.length == 1){
             min = "0$min"
         }
-        val alarmClock = AlarmClock(hour, min)
+        val alarmClock = AlarmClock(hour, min, false)
         val setIntent = Intent().apply{
             putExtra("alarmClock", alarmClock)
         }

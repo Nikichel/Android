@@ -11,11 +11,13 @@ class AlarmClockAdapter(private val listener : Listener): RecyclerView.Adapter<A
     class AlarmHolder(item: View) : RecyclerView.ViewHolder(item){
         private val binding = ClockItemBinding.bind(item)
         fun bind(alarmClock: AlarmClock, listener : Listener) =with(binding){
+            alarmSwitch.isChecked = alarmClock.isActive
             val fullTime = "${alarmClock.hour}:${alarmClock.min}"
             alarmTime.text = fullTime
             alarmSwitch.setOnCheckedChangeListener{_, isChecked ->
                 if(isChecked){
                     listener.onSwitch(alarmClock)
+                    alarmClock.isActive=true
                 }
             }
         }
@@ -36,7 +38,7 @@ class AlarmClockAdapter(private val listener : Listener): RecyclerView.Adapter<A
 
     fun addAlarm(alarm: AlarmClock){
         alarmList.add(alarm)
-        notifyDataSetChanged()
+        notifyItemChanged(alarmList.size-1, null)
     }
     interface Listener{
         fun onSwitch(alarm: AlarmClock)

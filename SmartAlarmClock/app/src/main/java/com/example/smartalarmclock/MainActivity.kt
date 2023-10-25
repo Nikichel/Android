@@ -50,13 +50,16 @@ class MainActivity : AppCompatActivity() {
         val task = binding.expressText.text.toString()
         if(task.isNotEmpty()){
             val answer = calculateRPN(toRPN(task))
-            binding.answerText.visibility = View.VISIBLE
-            if(answer == binding.answerInput.text.toString().toInt()){
-                finish()
-            }
-            else{
-                binding.answerText.setTextColor(Color.RED)
-                binding.answerText.text = "НЕ ВЕРНО!\n"
+            val userAnswer = binding.answerInput.text.toString()
+            if(userAnswer.isNotEmpty()){
+                if(answer == userAnswer.toInt()){
+                    finish()
+                }
+                else{
+                    binding.answerText.visibility = View.VISIBLE
+                    binding.answerText.setTextColor(Color.RED)
+                    binding.answerText.text = "НЕ ВЕРНО!\n"
+                }
             }
             binding.expressText.text = generateExperssion()
             binding.answerInput.setText("")
