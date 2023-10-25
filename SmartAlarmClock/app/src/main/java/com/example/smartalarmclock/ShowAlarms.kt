@@ -42,10 +42,20 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
 
     private fun initAlarmManager(alarm: AlarmClock){
         val clock = Calendar.getInstance()
+        val requestCode = alarm.hour.toInt()+alarm.min.toInt()
         var alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val alarmIntent = Intent(this, AlarmReceiver::class.java).let { intent ->
-            PendingIntent.getBroadcast(this, 0,intent, PendingIntent.FLAG_IMMUTABLE)
+
+        val alarmIntent = Intent(this, AlarmReceiver::class.java).apply {
+            putExtra("hour", alarm.hour.toInt())
+            putExtra("minute", alarm.min.toInt())
         }
+
+        val alarmPendingIntent = PendingIntent.getBroadcast(
+            this,
+            requestCode,
+            alarmIntent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
 
         clock.set(Calendar.HOUR_OF_DAY, alarm.hour.toInt())
         clock.set(Calendar.MINUTE, alarm.min.toInt())
@@ -53,13 +63,23 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
         alarmManager?.setExact(
             AlarmManager.RTC_WAKEUP,
             clock.timeInMillis,
-            alarmIntent
+            alarmPendingIntent
         )
     }
     override fun onSwitch(alarm: AlarmClock) {
-
         initAlarmManager(alarm)
 
         Toast.makeText(this, "Будильник на ${alarm.hour}:${alarm.min} устновлен", Toast.LENGTH_LONG).show();
+    }
+
+    override fun offSwitch(alarm: AlarmClock) {
+        val requestCode = alarm.hour.toInt()+alarm.min.toInt()
+
+        var alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmIntent = Intent(this, AlarmReceiver::class.java).let { intent ->
+            PendingIntent.getBroadcast(this, requestCode,intent, PendingIntent.FLAG_IMMUTABLE)
+        }
+
+        alarmManager?.cancel(alarmIntent)
     }
 }

@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if(ringtone!=null && ringtone.isPlaying){
+        if(ringtone.isPlaying){
             ringtone.stop()
         }
     }

@@ -15,10 +15,11 @@ class AlarmClockAdapter(private val listener : Listener): RecyclerView.Adapter<A
             val fullTime = "${alarmClock.hour}:${alarmClock.min}"
             alarmTime.text = fullTime
             alarmSwitch.setOnCheckedChangeListener{_, isChecked ->
-                if(isChecked){
+                alarmClock.isActive = alarmSwitch.isChecked
+                if(isChecked)
                     listener.onSwitch(alarmClock)
-                    alarmClock.isActive=true
-                }
+                else
+                    listener.offSwitch(alarmClock)
             }
         }
     }
@@ -42,5 +43,6 @@ class AlarmClockAdapter(private val listener : Listener): RecyclerView.Adapter<A
     }
     interface Listener{
         fun onSwitch(alarm: AlarmClock)
+        fun offSwitch(alarm: AlarmClock)
     }
 }
