@@ -30,6 +30,7 @@ class AlarmActivity : AppCompatActivity() {
     }
 
     fun onClickSetAlarmClock(view: View) = with(binding){
+        val action = intent.action
         var hour = alarmClock.hour.toString()
         var min = alarmClock.minute.toString()
 
@@ -40,10 +41,21 @@ class AlarmActivity : AppCompatActivity() {
             min = "0$min"
         }
         val alarmClock = AlarmClock(hour, min, false)
-        val setIntent = Intent().apply{
-            putExtra("alarmClock", alarmClock)
+        if(action == "SET") {
+            val setIntent = Intent().apply {
+                putExtra("alarmClock", alarmClock)
+            }
+            setResult(RESULT_OK, setIntent)
         }
-        setResult(RESULT_OK, setIntent)
+        else if(action == "EDIT"){
+            alarmClock.isActive = true
+            val position = intent.getIntExtra("editPosition", -1)
+            val editIntent = Intent().apply {
+                putExtra("alarmClock", alarmClock)
+                putExtra("positionAlarm", position)
+            }
+            setResult(RESULT_OK, editIntent)
+        }
         finish()
     }
 }

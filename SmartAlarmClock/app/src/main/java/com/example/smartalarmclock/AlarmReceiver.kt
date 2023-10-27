@@ -11,7 +11,6 @@ import java.util.Calendar
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-
         val hour = intent.getIntExtra("hour", 0)
         val minute = intent.getIntExtra("minute", 0)
 

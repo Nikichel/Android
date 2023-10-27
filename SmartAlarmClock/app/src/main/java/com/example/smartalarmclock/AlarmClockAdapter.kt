@@ -21,6 +21,9 @@ class AlarmClockAdapter(private val listener : Listener): RecyclerView.Adapter<A
                 else
                     listener.offSwitch(alarmClock)
             }
+            itemView.setOnClickListener {
+                listener.onEdit(alarmClock, adapterPosition)
+            }
         }
     }
 
@@ -41,8 +44,13 @@ class AlarmClockAdapter(private val listener : Listener): RecyclerView.Adapter<A
         alarmList.add(alarm)
         notifyItemChanged(alarmList.size-1, null)
     }
+    fun updateAlarm(alarm: AlarmClock, position: Int) {
+        alarmList[position] = alarm
+        notifyItemChanged(position)
+    }
     interface Listener{
         fun onSwitch(alarm: AlarmClock)
         fun offSwitch(alarm: AlarmClock)
+        fun onEdit(alarm: AlarmClock, position: Int)
     }
 }

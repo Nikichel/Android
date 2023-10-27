@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,11 +18,22 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
     private lateinit var binding: ActivityRecycleViewBinding
     private val alarmAdapter = AlarmClockAdapter(this)
     private lateinit var setAlarmLauncher: ActivityResultLauncher<Intent>
+    private lateinit var editAlarmLauncher: ActivityResultLauncher<Intent>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRecycleViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
         init()
+        editAlarmLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+            if(it.resultCode == RESULT_OK){
+                @Suppress("DEPRECATION")
+                val editAlarm = it.data?.getSerializableExtra("alarmClock") as AlarmClock
+                val editPosition = it.data?.getIntExtra("positionAlarm", -1)!!
+                Log.d("position", "$editPosition")
+                onAlarm(editAlarm)
+                alarmAdapter.updateAlarm(editAlarm, editPosition)
+            }
+        }
         setAlarmLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
             if(it.resultCode == RESULT_OK){
                 @Suppress("DEPRECATION")
@@ -35,12 +47,14 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
             recyclerView.layoutManager = LinearLayoutManager(this@ShowAlarms)
             recyclerView.adapter = alarmAdapter
             addAlarmB.setOnClickListener{
-                setAlarmLauncher.launch(Intent(this@ShowAlarms, AlarmActivity::class.java))
+                val setIntent = Intent(this@ShowAlarms, AlarmActivity::class.java)
+                setIntent.action = "SET"
+                setAlarmLauncher.launch(setIntent)
             }
         }
     }
 
-    private fun initAlarmManager(alarm: AlarmClock){
+    private fun onAlarm(alarm: AlarmClock){
         val clock = Calendar.getInstance()
         val requestCode = alarm.hour.toInt()+alarm.min.toInt()
         var alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -60,19 +74,14 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
         clock.set(Calendar.HOUR_OF_DAY, alarm.hour.toInt())
         clock.set(Calendar.MINUTE, alarm.min.toInt())
         clock.set(Calendar.SECOND, 0)
-        alarmManager?.setExact(
+        alarmManager.setExact(
             AlarmManager.RTC_WAKEUP,
             clock.timeInMillis,
             alarmPendingIntent
         )
     }
-    override fun onSwitch(alarm: AlarmClock) {
-        initAlarmManager(alarm)
 
-        Toast.makeText(this, "Будильник на ${alarm.hour}:${alarm.min} устновлен", Toast.LENGTH_LONG).show();
-    }
-
-    override fun offSwitch(alarm: AlarmClock) {
+    private fun offAlarm(alarm: AlarmClock){
         val requestCode = alarm.hour.toInt()+alarm.min.toInt()
 
         var alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -80,6 +89,24 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
             PendingIntent.getBroadcast(this, requestCode,intent, PendingIntent.FLAG_IMMUTABLE)
         }
 
-        alarmManager?.cancel(alarmIntent)
+        alarmManager.cancel(alarmIntent)
+    }
+    override fun onSwitch(alarm: AlarmClock) {
+        onAlarm(alarm)
+
+        Toast.makeText(this, "Будильник на ${alarm.hour}:${alarm.min} устновлен", Toast.LENGTH_LONG).show();
+    }
+
+    override fun offSwitch(alarm: AlarmClock) {
+        offAlarm(alarm)
+    }
+
+    override fun onEdit(alarmClock: AlarmClock, position:Int) {
+        offAlarm(alarmClock)
+
+        val editIntent = Intent(this@ShowAlarms, AlarmActivity::class.java)
+        editIntent.putExtra("editPosition", position)
+        editIntent.action = "EDIT"
+        editAlarmLauncher.launch(editIntent)
     }
 }
