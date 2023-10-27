@@ -13,6 +13,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.smartalarmclock.databinding.ActivityAlarmBinding
+import com.example.smartalarmclock.extraConstants.extraConstants
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -41,18 +42,18 @@ class AlarmActivity : AppCompatActivity() {
             min = "0$min"
         }
         val alarmClock = AlarmClock(hour, min, false)
-        if(action == "SET") {
+        if(action == extraConstants.STATE_SET) {
             val setIntent = Intent().apply {
-                putExtra("alarmClock", alarmClock)
+                putExtra(extraConstants.EXTRA_ALARM, alarmClock)
             }
             setResult(RESULT_OK, setIntent)
         }
-        else if(action == "EDIT"){
+        else if(action == extraConstants.STATE_EDIT){
             alarmClock.isActive = true
-            val position = intent.getIntExtra("editPosition", -1)
+            val position = intent.getIntExtra(extraConstants.EXTRA_POSITION_ALARM, -1)
             val editIntent = Intent().apply {
-                putExtra("alarmClock", alarmClock)
-                putExtra("positionAlarm", position)
+                putExtra(extraConstants.EXTRA_ALARM, alarmClock)
+                putExtra(extraConstants.EXTRA_POSITION_ALARM, position)
             }
             setResult(RESULT_OK, editIntent)
         }

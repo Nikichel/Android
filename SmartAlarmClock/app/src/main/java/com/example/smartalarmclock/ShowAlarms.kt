@@ -12,6 +12,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.smartalarmclock.databinding.ActivityRecycleViewBinding
+import com.example.smartalarmclock.extraConstants.extraConstants
 import java.util.Calendar
 
 class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
@@ -23,13 +24,12 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
         super.onCreate(savedInstanceState)
         binding = ActivityRecycleViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        init()
+        initActivity()
         editAlarmLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
             if(it.resultCode == RESULT_OK){
                 @Suppress("DEPRECATION")
-                val editAlarm = it.data?.getSerializableExtra("alarmClock") as AlarmClock
-                val editPosition = it.data?.getIntExtra("positionAlarm", -1)!!
-                Log.d("position", "$editPosition")
+                val editAlarm = it.data?.getSerializableExtra(extraConstants.EXTRA_ALARM) as AlarmClock
+                val editPosition = it.data?.getIntExtra(extraConstants.EXTRA_POSITION_ALARM, -1)!!
                 onAlarm(editAlarm)
                 alarmAdapter.updateAlarm(editAlarm, editPosition)
             }
@@ -37,18 +37,18 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
         setAlarmLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
             if(it.resultCode == RESULT_OK){
                 @Suppress("DEPRECATION")
-                alarmAdapter.addAlarm(it.data?.getSerializableExtra("alarmClock") as AlarmClock)
+                alarmAdapter.addAlarm(it.data?.getSerializableExtra(extraConstants.EXTRA_ALARM) as AlarmClock)
             }
         }
     }
 
-    private fun init(){
+    private fun initActivity(){
         binding.apply{
             recyclerView.layoutManager = LinearLayoutManager(this@ShowAlarms)
             recyclerView.adapter = alarmAdapter
             addAlarmB.setOnClickListener{
                 val setIntent = Intent(this@ShowAlarms, AlarmActivity::class.java)
-                setIntent.action = "SET"
+                setIntent.action = extraConstants.STATE_SET
                 setAlarmLauncher.launch(setIntent)
             }
         }
@@ -60,8 +60,8 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
         var alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val alarmIntent = Intent(this, AlarmReceiver::class.java).apply {
-            putExtra("hour", alarm.hour.toInt())
-            putExtra("minute", alarm.min.toInt())
+            putExtra(extraConstants.HOUR, alarm.hour.toInt())
+            putExtra(extraConstants.MINUTE, alarm.min.toInt())
         }
 
         val alarmPendingIntent = PendingIntent.getBroadcast(
@@ -101,12 +101,12 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
         offAlarm(alarm)
     }
 
-    override fun onEdit(alarmClock: AlarmClock, position:Int) {
-        offAlarm(alarmClock)
+    override fun onEdit(alarm: AlarmClock, position:Int) {
+        offAlarm(alarm)
 
         val editIntent = Intent(this@ShowAlarms, AlarmActivity::class.java)
-        editIntent.putExtra("editPosition", position)
-        editIntent.action = "EDIT"
+        editIntent.putExtra(extraConstants.EXTRA_POSITION_ALARM, position)
+        editIntent.action = extraConstants.STATE_EDIT
         editAlarmLauncher.launch(editIntent)
     }
 }

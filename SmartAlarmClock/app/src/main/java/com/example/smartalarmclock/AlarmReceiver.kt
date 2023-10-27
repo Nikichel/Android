@@ -7,12 +7,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.PowerManager
+import com.example.smartalarmclock.extraConstants.extraConstants
 import java.util.Calendar
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        val hour = intent.getIntExtra("hour", 0)
-        val minute = intent.getIntExtra("minute", 0)
+        val hour = intent.getIntExtra(extraConstants.HOUR, 0)
+        val minute = intent.getIntExtra(extraConstants.MINUTE, 0)
 
         setNewAlarm(hour, minute, context)
 
@@ -38,8 +39,8 @@ class AlarmReceiver : BroadcastReceiver() {
         var alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         val alarmIntent = Intent(context, AlarmReceiver::class.java).apply {
-            putExtra("hour", hour)
-            putExtra("minute", minute)
+            putExtra(extraConstants.HOUR, hour)
+            putExtra(extraConstants.MINUTE, minute)
         }
 
         val alarmPendingIntent = PendingIntent.getBroadcast(
