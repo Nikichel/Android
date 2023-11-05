@@ -18,6 +18,7 @@ import com.example.smartalarmclock.databinding.ActivityRecycleViewBinding
 import com.example.smartalarmclock.extraConstants.extraConstants
 import java.util.Calendar
 
+@Suppress("DEPRECATION")
 class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
     private lateinit var binding: ActivityRecycleViewBinding
     private val alarmAdapter = AlarmClockAdapter(this)
@@ -35,16 +36,16 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
         loadFromDb()
         editAlarmLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
             if(it.resultCode == RESULT_OK){
-                @Suppress("DEPRECATION")
-                val editAlarm = it.data?.getSerializableExtra(extraConstants.EXTRA_ALARM) as AlarmClock
+                val editAlarm = it.data?.getSerializableExtra(extraConstants.EXTRA_EDIT_ALARM) as AlarmClock
+                val oldAlarm = it.data?.getSerializableExtra(extraConstants.EXTRA_ALARM) as AlarmClock
                 val editPosition = it.data?.getIntExtra(extraConstants.EXTRA_POSITION_ALARM, -1)!!
+                dbManager.updateInDbByHashCode(oldAlarm, editAlarm)
                 controlAlarm.onAlarm(editAlarm)
                 alarmAdapter.updateAlarm(editAlarm, editPosition)
             }
         }
         setAlarmLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
             if(it.resultCode == RESULT_OK){
-                @Suppress("DEPRECATION")
                 val alarm = it.data?.getSerializableExtra(extraConstants.EXTRA_ALARM) as AlarmClock
                 alarmAdapter.addAlarm(alarm)
                 dbManager.insertToDb(alarm)
@@ -79,12 +80,13 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
     }
     override fun onSwitch(alarm: AlarmClock) {
         controlAlarm.onAlarm(alarm)
-
+        dbManager.updateInDbByHashCode(alarm, alarm)
         Toast.makeText(this, "Будильник на ${alarm.hour}:${alarm.min} устновлен", Toast.LENGTH_LONG).show();
     }
 
     override fun offSwitch(alarm: AlarmClock) {
         controlAlarm.offAlarm(alarm)
+        dbManager.updateInDbByHashCode(alarm, alarm)
     }
 
     override fun onEdit(alarm: AlarmClock, position:Int) {
@@ -92,6 +94,7 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
 
         val editIntent = Intent(this@ShowAlarms, AlarmActivity::class.java)
         editIntent.putExtra(extraConstants.EXTRA_POSITION_ALARM, position)
+        editIntent.putExtra(extraConstants.EXTRA_ALARM, alarm)
         editIntent.action = extraConstants.STATE_EDIT
         editAlarmLauncher.launch(editIntent)
     }
