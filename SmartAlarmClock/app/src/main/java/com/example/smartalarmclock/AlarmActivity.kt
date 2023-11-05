@@ -41,7 +41,7 @@ class AlarmActivity : AppCompatActivity() {
         if(min.length == 1){
             min = "0$min"
         }
-        val alarmClock = AlarmClock(hour, min, false)
+        val alarmClock = AlarmClock(hour, min, isActive = false, isSelect = false)
         if(action == extraConstants.STATE_SET) {
             val setIntent = Intent().apply {
                 putExtra(extraConstants.EXTRA_ALARM, alarmClock)
@@ -49,7 +49,7 @@ class AlarmActivity : AppCompatActivity() {
             setResult(RESULT_OK, setIntent)
         }
         else if(action == extraConstants.STATE_EDIT){
-            alarmClock.isActive = true
+            alarmClock.isActive = false
             val position = intent.getIntExtra(extraConstants.EXTRA_POSITION_ALARM, -1)
             val editIntent = Intent().apply {
                 putExtra(extraConstants.EXTRA_ALARM, alarmClock)

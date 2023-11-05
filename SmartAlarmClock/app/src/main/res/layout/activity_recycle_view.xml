@@ -26,7 +26,7 @@
         android:id="@+id/addAlarmB"
         android:layout_width="64dp"
         android:layout_height="64dp"
-        android:background="@drawable/roundstyle"
+        android:background="@drawable/rounded_background"
         android:foregroundGravity="top"
         android:freezesText="false"
         android:gravity="center|top"
@@ -38,4 +38,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/recyclerView"
         app:layout_constraintVertical_bias="0.80" />
+
+    <Button
+        android:id="@+id/removeAlarmB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="Удалить"
+        android:textSize="24sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

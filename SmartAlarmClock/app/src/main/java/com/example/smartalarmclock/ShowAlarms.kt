@@ -7,6 +7,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -46,6 +47,11 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
         binding.apply{
             recyclerView.layoutManager = LinearLayoutManager(this@ShowAlarms)
             recyclerView.adapter = alarmAdapter
+            removeAlarmB.setOnClickListener {
+                alarmAdapter.removeSelectedAlarms()
+                addAlarmB.visibility = View.VISIBLE
+                removeAlarmB.visibility = View.GONE
+            }
             addAlarmB.setOnClickListener{
                 val setIntent = Intent(this@ShowAlarms, AlarmActivity::class.java)
                 setIntent.action = extraConstants.STATE_SET
@@ -108,5 +114,13 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
         editIntent.putExtra(extraConstants.EXTRA_POSITION_ALARM, position)
         editIntent.action = extraConstants.STATE_EDIT
         editAlarmLauncher.launch(editIntent)
+    }
+
+    override fun onSelect(alarm: AlarmClock, position: Int) {
+        binding.apply{
+            addAlarmB.visibility = View.GONE
+            removeAlarmB.visibility = View.VISIBLE
+        }
+        Toast.makeText(this, "Выбран ${alarm.hour}:${alarm.min}.\nПозиция $position", Toast.LENGTH_LONG).show();
     }
 }

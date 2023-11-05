@@ -1,5 +1,7 @@
 package com.example.smartalarmclock
 
+import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,11 +13,13 @@ class AlarmClockAdapter(private val listener : Listener): RecyclerView.Adapter<A
     class AlarmHolder(item: View) : RecyclerView.ViewHolder(item){
         private val binding = ClockItemBinding.bind(item)
         fun bind(alarmClock: AlarmClock, listener : Listener) =with(binding){
-            alarmSwitch.isChecked = alarmClock.isActive
+            clockLayout.setBackgroundColor(Color.WHITE)
+
+            switchAlarm.isChecked = alarmClock.isActive
             val fullTime = "${alarmClock.hour}:${alarmClock.min}"
-            alarmTime.text = fullTime
-            alarmSwitch.setOnCheckedChangeListener{_, isChecked ->
-                alarmClock.isActive = alarmSwitch.isChecked
+            tvAlarmTime.text = fullTime
+            switchAlarm.setOnCheckedChangeListener{_, isChecked ->
+                alarmClock.isActive = switchAlarm.isChecked
                 if(isChecked)
                     listener.onSwitch(alarmClock)
                 else
@@ -24,10 +28,20 @@ class AlarmClockAdapter(private val listener : Listener): RecyclerView.Adapter<A
             itemView.setOnClickListener {
                 listener.onEdit(alarmClock, adapterPosition)
             }
+            itemView.setOnLongClickListener {
+                alarmClock.isSelect = !alarmClock.isSelect
+                if(alarmClock.isSelect)
+                    clockLayout.setBackgroundColor(Color.LTGRAY)
+                else
+                    clockLayout.setBackgroundColor(Color.WHITE)
+                listener.onSelect(alarmClock, adapterPosition)
+                true
+            }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlarmHolder {
+
         val view = LayoutInflater.from(parent.context).inflate(R.layout.clock_item, parent, false)
         return AlarmHolder(view)
     }
@@ -44,13 +58,26 @@ class AlarmClockAdapter(private val listener : Listener): RecyclerView.Adapter<A
         alarmList.add(alarm)
         notifyItemChanged(alarmList.size-1, null)
     }
+    fun removeSelectedAlarms() {
+        val iterator = alarmList.iterator()
+        while (iterator.hasNext()) {
+            val alarm = iterator.next()
+            if (alarm.isSelect) {
+                val position = alarmList.indexOf(alarm)
+                iterator.remove()
+                notifyItemRemoved(position)
+            }
+        }
+    }
     fun updateAlarm(alarm: AlarmClock, position: Int) {
         alarmList[position] = alarm
+        //notifyItemRemoved(position)
         notifyItemChanged(position)
     }
     interface Listener{
         fun onSwitch(alarm: AlarmClock)
         fun offSwitch(alarm: AlarmClock)
         fun onEdit(alarm: AlarmClock, position: Int)
+        fun onSelect(alarm: AlarmClock, position: Int)
     }
 }
