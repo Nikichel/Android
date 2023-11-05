@@ -6,7 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.smartalarmclock.controlAlarm.ControlAlarm
+import com.example.smartalarmclock.database.DbManager
 import com.example.smartalarmclock.databinding.ClockItemBinding
+import java.util.UUID
 
 class AlarmClockAdapter(private val listener : Listener): RecyclerView.Adapter<AlarmClockAdapter.AlarmHolder>() {
     private val alarmList = ArrayList<AlarmClock>()
@@ -56,22 +59,24 @@ class AlarmClockAdapter(private val listener : Listener): RecyclerView.Adapter<A
 
     fun addAlarm(alarm: AlarmClock){
         alarmList.add(alarm)
+
         notifyItemChanged(alarmList.size-1, null)
     }
-    fun removeSelectedAlarms() {
+    fun removeSelectedAlarms(dbManager: DbManager, controlAlarm: ControlAlarm) {
         val iterator = alarmList.iterator()
         while (iterator.hasNext()) {
             val alarm = iterator.next()
             if (alarm.isSelect) {
                 val position = alarmList.indexOf(alarm)
                 iterator.remove()
+                controlAlarm.offAlarm(alarm)
+                dbManager.deleteFromDbByHashCode(alarm)
                 notifyItemRemoved(position)
             }
         }
     }
     fun updateAlarm(alarm: AlarmClock, position: Int) {
         alarmList[position] = alarm
-        //notifyItemRemoved(position)
         notifyItemChanged(position)
     }
     interface Listener{
