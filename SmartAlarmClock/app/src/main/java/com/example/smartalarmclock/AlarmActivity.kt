@@ -17,6 +17,7 @@ import com.example.smartalarmclock.extraConstants.extraConstants
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
+import java.util.UUID
 
 
 class AlarmActivity : AppCompatActivity() {
@@ -41,7 +42,7 @@ class AlarmActivity : AppCompatActivity() {
         if(min.length == 1){
             min = "0$min"
         }
-        val alarmClock = AlarmClock(hour, min, isActive = false, isSelect = false)
+        val alarmClock = AlarmClock(UUID.randomUUID(), hour, min, isActive = false, isSelect = false)
         if(action == extraConstants.STATE_SET) {
             val setIntent = Intent().apply {
                 putExtra(extraConstants.EXTRA_ALARM, alarmClock)
