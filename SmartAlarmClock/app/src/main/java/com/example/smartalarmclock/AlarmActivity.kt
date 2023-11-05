@@ -13,6 +13,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.smartalarmclock.databinding.ActivityAlarmBinding
+import com.example.smartalarmclock.extraConstants.extraConstants
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -30,6 +31,7 @@ class AlarmActivity : AppCompatActivity() {
     }
 
     fun onClickSetAlarmClock(view: View) = with(binding){
+        val action = intent.action
         var hour = alarmClock.hour.toString()
         var min = alarmClock.minute.toString()
 
@@ -39,11 +41,22 @@ class AlarmActivity : AppCompatActivity() {
         if(min.length == 1){
             min = "0$min"
         }
-        val alarmClock = AlarmClock(hour, min, false)
-        val setIntent = Intent().apply{
-            putExtra("alarmClock", alarmClock)
+        val alarmClock = AlarmClock(hour, min, isActive = false, isSelect = false)
+        if(action == extraConstants.STATE_SET) {
+            val setIntent = Intent().apply {
+                putExtra(extraConstants.EXTRA_ALARM, alarmClock)
+            }
+            setResult(RESULT_OK, setIntent)
         }
-        setResult(RESULT_OK, setIntent)
+        else if(action == extraConstants.STATE_EDIT){
+            alarmClock.isActive = false
+            val position = intent.getIntExtra(extraConstants.EXTRA_POSITION_ALARM, -1)
+            val editIntent = Intent().apply {
+                putExtra(extraConstants.EXTRA_ALARM, alarmClock)
+                putExtra(extraConstants.EXTRA_POSITION_ALARM, position)
+            }
+            setResult(RESULT_OK, editIntent)
+        }
         finish()
     }
 }
