@@ -1,37 +1,49 @@
 package com.example.smartalarmclock
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
+import android.media.AudioManager
 import android.media.Ringtone
 import android.media.RingtoneManager
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.RequiresApi
 import com.example.smartalarmclock.databinding.ActivityMainBinding
 import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var ringtone: Ringtone
+    private val audioManager: AudioManager? = null
+    private var currentVolume: Int? = null
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
+    @RequiresApi(Build.VERSION_CODES.P)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        val filter = IntentFilter("android.intent.action.ALARM_RECEIVER")
+        val receiver = AlarmReceiver()
+        registerReceiver(receiver, filter)
+        //window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN
         setContentView(binding.root)
-
+        //val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        //currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_RING)
+        //audioManager.setStreamVolume(AudioManager.STREAM_RING, audioManager.getStreamMaxVolume(AudioManager.STREAM_RING), 0)
         setRingtone()
     }
 
+    @RequiresApi(Build.VERSION_CODES.P)
     private fun setRingtone() {
         var notification: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
         ringtone = RingtoneManager.getRingtone(this, notification)
-        if (ringtone == null) {
-            notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
-            ringtone = RingtoneManager.getRingtone(this, notification)
-        } else {
             ringtone.isLooping = true
             ringtone.play()
-        }
     }
 
     override fun onResume() {
@@ -53,6 +65,7 @@ class MainActivity : AppCompatActivity() {
             val userAnswer = binding.answerInput.text.toString()
             if(userAnswer.isNotEmpty()){
                 if(answer == userAnswer.toInt()){
+                    //audioManager?.setStreamVolume(AudioManager.STREAM_RING, currentVolume!!, 0)
                     finish()
                 }
                 else{

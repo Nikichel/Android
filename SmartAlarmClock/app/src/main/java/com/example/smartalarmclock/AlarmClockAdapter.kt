@@ -17,8 +17,13 @@ class AlarmClockAdapter(private val listener : Listener): RecyclerView.Adapter<A
         private val binding = ClockItemBinding.bind(item)
         fun bind(alarmClock: AlarmClock, listener : Listener) =with(binding){
             clockLayout.setBackgroundColor(Color.WHITE)
-
             switchAlarm.isChecked = alarmClock.isActive
+            if(alarmClock.hour.length == 1){
+                alarmClock.hour = "0${alarmClock.hour}"
+            }
+            if(alarmClock.min.length == 1){
+                alarmClock.min = "0${alarmClock.min}"
+            }
             val fullTime = "${alarmClock.hour}:${alarmClock.min}"
             tvAlarmTime.text = fullTime
             switchAlarm.setOnCheckedChangeListener{_, isChecked ->
@@ -62,14 +67,14 @@ class AlarmClockAdapter(private val listener : Listener): RecyclerView.Adapter<A
 
         notifyItemChanged(alarmList.size-1, null)
     }
-    fun removeSelectedAlarms(dbManager: DbManager, controlAlarm: ControlAlarm) {
+    fun removeSelectedAlarms(dbManager: DbManager, showAlarms: ShowAlarms) {
         val iterator = alarmList.iterator()
         while (iterator.hasNext()) {
             val alarm = iterator.next()
             if (alarm.isSelect) {
                 val position = alarmList.indexOf(alarm)
                 iterator.remove()
-                controlAlarm.offAlarm(alarm)
+                showAlarms.offAlarm(alarm)
                 dbManager.deleteFromDbByHashCode(alarm)
                 notifyItemRemoved(position)
             }

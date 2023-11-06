@@ -35,15 +35,9 @@ class AlarmActivity : AppCompatActivity() {
 
     fun onClickSetAlarmClock(view: View) = with(binding){
         val action = intent.action
-        var hour = alarmClock.hour.toString()
-        var min = alarmClock.minute.toString()
+        val hour = alarmClock.hour.toString()
+        val min = alarmClock.minute.toString()
 
-        if(hour.length == 1){
-            hour = "0$hour"
-        }
-        if(min.length == 1){
-            min = "0$min"
-        }
         val alarmClock = AlarmClock(UUID.randomUUID(), hour, min, isActive = false, isSelect = false)
         if(action == extraConstants.STATE_SET) {
             val setIntent = Intent().apply {

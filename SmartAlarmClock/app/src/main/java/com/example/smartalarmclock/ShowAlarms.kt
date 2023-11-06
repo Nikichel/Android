@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -25,12 +26,12 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
     private lateinit var setAlarmLauncher: ActivityResultLauncher<Intent>
     private lateinit var editAlarmLauncher: ActivityResultLauncher<Intent>
     private val dbManager = DbManager(this)
-    private val controlAlarm = ControlAlarm()
+    //private val controlAlarm = ControlAlarm()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRecycleViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        controlAlarm.context=this
+        //controlAlarm.context=this
         initActivity()
         dbManager.open()
         loadFromDb()
@@ -40,7 +41,6 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
                 val oldAlarm = it.data?.getSerializableExtra(extraConstants.EXTRA_ALARM) as AlarmClock
                 val editPosition = it.data?.getIntExtra(extraConstants.EXTRA_POSITION_ALARM, -1)!!
                 dbManager.updateInDbByHashCode(oldAlarm, editAlarm)
-                controlAlarm.onAlarm(editAlarm)
                 alarmAdapter.updateAlarm(editAlarm, editPosition)
             }
         }
@@ -67,7 +67,7 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
             recyclerView.layoutManager = LinearLayoutManager(this@ShowAlarms)
             recyclerView.adapter = alarmAdapter
             removeAlarmB.setOnClickListener {
-                alarmAdapter.removeSelectedAlarms(dbManager, controlAlarm)
+                alarmAdapter.removeSelectedAlarms(dbManager, this@ShowAlarms)
                 addAlarmB.visibility = View.VISIBLE
                 removeAlarmB.visibility = View.GONE
             }
@@ -79,18 +79,18 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
         }
     }
     override fun onSwitch(alarm: AlarmClock) {
-        controlAlarm.onAlarm(alarm)
+        onAlarm(alarm)
         dbManager.updateInDbByHashCode(alarm, alarm)
         Toast.makeText(this, "Будильник на ${alarm.hour}:${alarm.min} устновлен", Toast.LENGTH_LONG).show();
     }
 
     override fun offSwitch(alarm: AlarmClock) {
-        controlAlarm.offAlarm(alarm)
+        offAlarm(alarm)
         dbManager.updateInDbByHashCode(alarm, alarm)
     }
 
     override fun onEdit(alarm: AlarmClock, position:Int) {
-        controlAlarm.offAlarm(alarm)
+        offAlarm(alarm)
 
         val editIntent = Intent(this@ShowAlarms, AlarmActivity::class.java)
         editIntent.putExtra(extraConstants.EXTRA_POSITION_ALARM, position)
@@ -104,6 +104,64 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
             addAlarmB.visibility = View.GONE
             removeAlarmB.visibility = View.VISIBLE
         }
-        Toast.makeText(this, "Выбран ${alarm.hour}:${alarm.min}.\nПозиция $position", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "Выбран ${alarm.hour}:${alarm.min}.\nПозиция $position", Toast.LENGTH_LONG).show();
+    }
+
+    fun onAlarm(alarm: AlarmClock){
+
+        val clock = Calendar.getInstance()
+        val requestCode = alarm.id.hashCode()
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmIntent = Intent(this, AlarmReceiver::class.java).let { intent ->
+            PendingIntent.getBroadcast(this, requestCode,intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
+
+        clock.set(Calendar.HOUR_OF_DAY, alarm.hour.toInt())
+        clock.set(Calendar.MINUTE, alarm.min.toInt())
+        clock.set(Calendar.SECOND, 0)
+        alarmManager?.setExact(
+            AlarmManager.RTC_WAKEUP,
+            clock.timeInMillis,
+            alarmIntent
+        )
+
+        /*val clock = Calendar.getInstance()
+        val requestCode = alarm.id.hashCode()
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val intent = Intent(this, AlarmReceiver::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val pendingIntent = PendingIntent.getActivity(this, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        clock.set(Calendar.HOUR_OF_DAY, alarm.hour.toInt())
+        clock.set(Calendar.MINUTE, alarm.min.toInt())
+        clock.set(Calendar.SECOND, 0)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, clock.timeInMillis, pendingIntent)
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, clock.timeInMillis, pendingIntent)
+        } else {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, clock.timeInMillis, pendingIntent)
+        }*/
+    }
+
+    fun offAlarm(alarm: AlarmClock){
+
+        val requestCode = alarm.id.hashCode()
+        var alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmIntent = Intent(this, AlarmReceiver::class.java).let { intent ->
+            PendingIntent.getBroadcast(this, requestCode,intent, PendingIntent.FLAG_IMMUTABLE)
+        }
+
+        alarmManager.cancel(alarmIntent)
+        /*val requestCode = alarm.id.hashCode()
+
+        var alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val alarmIntent = Intent(this, AlarmReceiver::class.java).let { intent ->
+            PendingIntent.getBroadcast(this, requestCode,intent, PendingIntent.FLAG_IMMUTABLE)
+        }
+
+        alarmManager.cancel(alarmIntent)*/
     }
 }
