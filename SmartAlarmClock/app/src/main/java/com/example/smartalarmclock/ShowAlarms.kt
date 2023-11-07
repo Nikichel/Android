@@ -4,12 +4,14 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.smartalarmclock.alarmClock.AlarmClock
 import com.example.smartalarmclock.alarmClock.AlarmReceiver
@@ -19,12 +21,13 @@ import com.example.smartalarmclock.extraConstants.extraConstants
 import java.util.Calendar
 
 @Suppress("DEPRECATION")
+@RequiresApi(Build.VERSION_CODES.O)
 class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
     private lateinit var binding: ActivityRecycleViewBinding
-    private val alarmAdapter = AlarmClockAdapter(this)
     private lateinit var setAlarmLauncher: ActivityResultLauncher<Intent>
     private lateinit var editAlarmLauncher: ActivityResultLauncher<Intent>
     private val dbManager = DbManager(this)
+    private val alarmAdapter = AlarmClockAdapter(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityRecycleViewBinding.inflate(layoutInflater)
@@ -78,7 +81,8 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
     override fun onSwitch(alarm: AlarmClock) {
         onAlarm(alarm)
         dbManager.updateInDbByHashCode(alarm, alarm)
-        Toast.makeText(this, "Будильник на ${alarm.hour}:${alarm.min} устновлен", Toast.LENGTH_LONG).show();
+        val time = getString(R.string.set_alarm_clock) + " " + alarm.convertToLocaleTime()
+        Toast.makeText(this, time , Toast.LENGTH_LONG).show()
     }
 
     override fun offSwitch(alarm: AlarmClock) {
@@ -120,26 +124,6 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
             clock.timeInMillis,
             AlarmManager.INTERVAL_DAY,
             alarmIntent)
-
-        /*val clock = Calendar.getInstance()
-        val requestCode = alarm.id.hashCode()
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-        val intent = Intent(this, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        val pendingIntent = PendingIntent.getActivity(this, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        clock.set(Calendar.HOUR_OF_DAY, alarm.hour.toInt())
-        clock.set(Calendar.MINUTE, alarm.min.toInt())
-        clock.set(Calendar.SECOND, 0)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, clock.timeInMillis, pendingIntent)
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, clock.timeInMillis, pendingIntent)
-        } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, clock.timeInMillis, pendingIntent)
-        }*/
     }
 
     fun offAlarm(alarm: AlarmClock){
@@ -150,21 +134,5 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
             PendingIntent.getBroadcast(this, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         }
         alarmManager.cancel(alarmIntent)
-
-        /*val requestCode = alarm.id.hashCode()
-        var alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val alarmIntent = Intent(this, AlarmReceiver::class.java).let { intent ->
-            PendingIntent.getBroadcast(this, requestCode,intent, PendingIntent.FLAG_IMMUTABLE)
-        }
-
-        alarmManager.cancel(alarmIntent)*/
-        /*val requestCode = alarm.id.hashCode()
-
-        var alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val alarmIntent = Intent(this, AlarmReceiver::class.java).let { intent ->
-            PendingIntent.getBroadcast(this, requestCode,intent, PendingIntent.FLAG_IMMUTABLE)
-        }
-
-        alarmManager.cancel(alarmIntent)*/
     }
 }

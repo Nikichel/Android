@@ -4,5 +4,6 @@
     <string name="hint_answer">Answer</string>
     <string name="answer_button">Answer</string>
     <string name="alarm_clock_button">Alarm clock</string>
-
+    <string name="every_day">Every Day</string>
+    <string name="set_alarm_clock">Alarm set for</string>
 </resources>

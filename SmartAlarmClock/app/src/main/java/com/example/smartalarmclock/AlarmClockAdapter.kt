@@ -1,29 +1,29 @@
 package com.example.smartalarmclock
 
 import android.graphics.Color
+import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.smartalarmclock.alarmClock.AlarmClock
 import com.example.smartalarmclock.database.DbManager
 import com.example.smartalarmclock.databinding.ClockItemBinding
 
+@RequiresApi(Build.VERSION_CODES.O)
 class AlarmClockAdapter(private val listener : Listener): RecyclerView.Adapter<AlarmClockAdapter.AlarmHolder>() {
     private val alarmList = ArrayList<AlarmClock>()
     class AlarmHolder(item: View) : RecyclerView.ViewHolder(item){
         private val binding = ClockItemBinding.bind(item)
+
         fun bind(alarmClock: AlarmClock, listener : Listener) =with(binding){
             clockLayout.setBackgroundColor(Color.WHITE)
             switchAlarm.isChecked = alarmClock.isActive
-            if(alarmClock.hour.length == 1){
-                alarmClock.hour = "0${alarmClock.hour}"
-            }
-            if(alarmClock.min.length == 1){
-                alarmClock.min = "0${alarmClock.min}"
-            }
-            val fullTime = "${alarmClock.hour}:${alarmClock.min}"
-            tvAlarmTime.text = fullTime
+
+            tvAlarmTime.text = alarmClock.convertToLocaleTime()
+
             switchAlarm.setOnCheckedChangeListener{_, isChecked ->
                 alarmClock.isActive = switchAlarm.isChecked
                 if(isChecked)
