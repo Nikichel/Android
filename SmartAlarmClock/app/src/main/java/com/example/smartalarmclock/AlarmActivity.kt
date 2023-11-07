@@ -2,23 +2,13 @@
 
 package com.example.smartalarmclock
 
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
-import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.smartalarmclock.alarmClock.AlarmClock
 import com.example.smartalarmclock.databinding.ActivityAlarmBinding
 import com.example.smartalarmclock.extraConstants.extraConstants
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 import java.util.UUID
 
 

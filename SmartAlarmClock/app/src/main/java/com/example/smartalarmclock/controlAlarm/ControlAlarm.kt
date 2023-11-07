@@ -4,8 +4,8 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import com.example.smartalarmclock.AlarmClock
-import com.example.smartalarmclock.AlarmReceiver
+import com.example.smartalarmclock.alarmClock.AlarmClock
+import com.example.smartalarmclock.alarmClock.AlarmReceiver
 import com.example.smartalarmclock.extraConstants.extraConstants
 import java.util.Calendar
 

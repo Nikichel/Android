@@ -1,15 +1,13 @@
 package com.example.smartalarmclock
 
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.smartalarmclock.controlAlarm.ControlAlarm
+import com.example.smartalarmclock.alarmClock.AlarmClock
 import com.example.smartalarmclock.database.DbManager
 import com.example.smartalarmclock.databinding.ClockItemBinding
-import java.util.UUID
 
 class AlarmClockAdapter(private val listener : Listener): RecyclerView.Adapter<AlarmClockAdapter.AlarmHolder>() {
     private val alarmList = ArrayList<AlarmClock>()

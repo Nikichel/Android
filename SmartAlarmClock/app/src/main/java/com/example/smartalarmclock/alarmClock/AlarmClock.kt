@@ -1,4 +1,4 @@
-package com.example.smartalarmclock
+package com.example.smartalarmclock.alarmClock
 
 import java.io.Serializable
 import java.util.UUID

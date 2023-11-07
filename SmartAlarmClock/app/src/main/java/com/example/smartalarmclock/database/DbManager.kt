@@ -3,7 +3,7 @@ package com.example.smartalarmclock.database
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import com.example.smartalarmclock.AlarmClock
+import com.example.smartalarmclock.alarmClock.AlarmClock
 import java.util.UUID
 
 class DbManager(context: Context) {
