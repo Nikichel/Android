@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/item_back"
     tools:context=".MainActivity">
 
     <EditText
@@ -14,6 +15,8 @@
         android:gravity="center"
         android:hint="@string/hint_answer"
         android:inputType="number|numberSigned"
+        android:textColor="@color/text"
+        android:textColorHint="@color/text_hint"
         android:textSize="34sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -2,4 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <!--<color name="white">#2F2F4A</color>-->
+    <color name="back">#89B7C8</color>
+    <color name="item_back">#1d1d4b</color>
+    <color name="button_back">#323285</color>
+    <color name="text">#DC8803</color>
+    <color name="text_hint">#80DC8803</color>
+    <!--<color name="white">#111198</color>-->
 </resources>

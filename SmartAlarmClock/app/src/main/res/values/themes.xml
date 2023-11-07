@@ -2,8 +2,14 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.SmartAlarmClock" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/button_back</item>
+        <item name="android:textColor">@color/text</item>
+        <!--<item name="android:background">@color/item_back</item>-->
     </style>
 
     <style name="Theme.SmartAlarmClock" parent="Base.Theme.SmartAlarmClock" />
+    <style name="timePickerStyle" parent="@android:style/Widget.Material.TimePicker">
+        <item name="android:textColorPrimary">@color/text</item> <!-- Замените #FF0000 на желаемый цвет -->
+        <!-- Другие настройки стиля, если необходимо -->
+    </style>
 </resources>
