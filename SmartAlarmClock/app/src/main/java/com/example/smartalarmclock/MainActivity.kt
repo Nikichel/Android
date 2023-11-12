@@ -11,8 +11,10 @@ import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.annotation.RequiresApi
+import androidx.core.text.isDigitsOnly
 import com.example.smartalarmclock.alarmClock.AlarmReceiver
 import com.example.smartalarmclock.databinding.ActivityMainBinding
 import kotlin.random.Random
@@ -20,7 +22,7 @@ import kotlin.random.Random
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var ringtone: Ringtone
-    private val audioManager: AudioManager? = null
+    private var audioManager: AudioManager? = null
     private var currentVolume: Int? = null
     @SuppressLint("UnspecifiedRegisterReceiverFlag")
     @RequiresApi(Build.VERSION_CODES.P)
@@ -31,9 +33,12 @@ class MainActivity : AppCompatActivity() {
         val receiver = AlarmReceiver()
         registerReceiver(receiver, filter)
         setContentView(binding.root)
-        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-        currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_RING)
-        audioManager.setStreamVolume(AudioManager.STREAM_RING, audioManager.getStreamMaxVolume(AudioManager.STREAM_RING), 0)
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        currentVolume = audioManager?.getStreamVolume(AudioManager.STREAM_RING)
+        audioManager?.setStreamVolume(AudioManager.STREAM_RING, 8, 0)
+
+        //Log.d("MyAct", currentVolume.toString()+ " " + audioManager?.getStreamVolume(AudioManager.STREAM_RING) + " " + AudioManager.STREAM_SYSTEM + " " + AudioManager.STREAM_ALARM)
+
         setRingtone()
     }
 
@@ -56,21 +61,21 @@ class MainActivity : AppCompatActivity() {
         if(ringtone.isPlaying){
             ringtone.stop()
         }
-        audioManager?.setStreamVolume(AudioManager.STREAM_RING, currentVolume!!, 0)
     }
     fun onClickGetAnswerB(view: View){
         val task = binding.expressText.text.toString()
         if(task.isNotEmpty()){
             val answer = calculateRPN(toRPN(task))
             val userAnswer = binding.answerInput.text.toString()
-            if(userAnswer.isNotEmpty()){
+            if(userAnswer.isNotEmpty() && userAnswer.isDigitsOnly() && userAnswer.length < 6){
                 if(answer == userAnswer.toInt()){
+                    audioManager?.setStreamVolume(AudioManager.STREAM_RING, currentVolume!!, 0)
                     finish()
                 }
                 else{
                     binding.answerText.visibility = View.VISIBLE
                     binding.answerText.setTextColor(Color.RED)
-                    binding.answerText.text = "НЕ ВЕРНО!\n"
+                    binding.answerText.text = getString(R.string.uncorrect)
                 }
             }
             binding.expressText.text = generateExperssion()

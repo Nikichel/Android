@@ -1,12 +1,16 @@
 package com.example.smartalarmclock
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
+import android.app.KeyguardManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -32,6 +36,7 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
         super.onCreate(savedInstanceState)
         binding = ActivityRecycleViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        //permissionRequest()
         initActivity()
         dbManager.open()
         loadFromDb()
@@ -116,14 +121,21 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
             PendingIntent.getBroadcast(this, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
+        val currentTime = Calendar.getInstance()
+        val alarmTime = alarm.hour.toInt()
+        if (currentTime.get(Calendar.HOUR_OF_DAY) > alarmTime ||
+            (currentTime.get(Calendar.HOUR_OF_DAY) == alarmTime && currentTime.get(Calendar.MINUTE) >= alarm.min.toInt())) {
+            clock.add(Calendar.DAY_OF_YEAR, 1)
+        }
+
         clock.set(Calendar.HOUR_OF_DAY, alarm.hour.toInt())
         clock.set(Calendar.MINUTE, alarm.min.toInt())
         clock.set(Calendar.SECOND, 0)
-        alarmManager.setRepeating(
+        alarmManager.setExact(
             AlarmManager.RTC_WAKEUP,
             clock.timeInMillis,
-            AlarmManager.INTERVAL_DAY,
-            alarmIntent)
+            alarmIntent
+        )
     }
 
     fun offAlarm(alarm: AlarmClock){

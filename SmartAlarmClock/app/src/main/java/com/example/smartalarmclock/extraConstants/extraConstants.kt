@@ -6,4 +6,5 @@ object extraConstants {
     const val STATE_EDIT = "EDIT"
     const val STATE_SET = "SET"
     const val EXTRA_EDIT_ALARM = "editAlarmClock"
+    const val OVERLAY_PERMISSION_REQUEST_CODE = 666
 }

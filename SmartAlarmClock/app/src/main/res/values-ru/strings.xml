@@ -6,4 +6,5 @@
     <string name="alarm_clock_button">Будильник</string>
     <string name="every_day">Ежедневно</string>
     <string name="set_alarm_clock">Будильник установлен на</string>
+    <string name="uncorrect">Не верно!</string>
 </resources>
