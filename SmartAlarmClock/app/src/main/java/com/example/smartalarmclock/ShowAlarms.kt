@@ -36,7 +36,6 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
         super.onCreate(savedInstanceState)
         binding = ActivityRecycleViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        //permissionRequest()
         initActivity()
         dbManager.open()
         loadFromDb()
@@ -121,21 +120,28 @@ class ShowAlarms : AppCompatActivity(), AlarmClockAdapter.Listener {
             PendingIntent.getBroadcast(this, requestCode, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         }
 
-        val currentTime = Calendar.getInstance()
+        /*val currentTime = Calendar.getInstance()
         val alarmTime = alarm.hour.toInt()
         if (currentTime.get(Calendar.HOUR_OF_DAY) > alarmTime ||
             (currentTime.get(Calendar.HOUR_OF_DAY) == alarmTime && currentTime.get(Calendar.MINUTE) >= alarm.min.toInt())) {
             clock.add(Calendar.DAY_OF_YEAR, 1)
-        }
+        }*/
 
         clock.set(Calendar.HOUR_OF_DAY, alarm.hour.toInt())
         clock.set(Calendar.MINUTE, alarm.min.toInt())
         clock.set(Calendar.SECOND, 0)
-        alarmManager.setExact(
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            clock.timeInMillis,
+            AlarmManager.INTERVAL_DAY, // Set the repeat interval to 7 days for weekly triggering
+            alarmIntent
+        )
+
+        /*alarmManager.setExact(
             AlarmManager.RTC_WAKEUP,
             clock.timeInMillis,
             alarmIntent
-        )
+        )*/
     }
 
     fun offAlarm(alarm: AlarmClock){

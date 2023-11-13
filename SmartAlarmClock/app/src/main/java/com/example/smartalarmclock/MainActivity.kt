@@ -37,8 +37,6 @@ class MainActivity : AppCompatActivity() {
         currentVolume = audioManager?.getStreamVolume(AudioManager.STREAM_RING)
         audioManager?.setStreamVolume(AudioManager.STREAM_RING, 8, 0)
 
-        //Log.d("MyAct", currentVolume.toString()+ " " + audioManager?.getStreamVolume(AudioManager.STREAM_RING) + " " + AudioManager.STREAM_SYSTEM + " " + AudioManager.STREAM_ALARM)
-
         setRingtone()
     }
 
@@ -52,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val task = generateExperssion()
+        val task = this.generateExperssion()
         binding.expressText.text = task
     }
 
@@ -84,7 +82,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun generateExperssion(): String{
-        var expression: String = ""
+        var expression = ""
         for(i in 0..2){
             expression += (Random.nextInt(9) + 1).toString()
             if(i!=2){
